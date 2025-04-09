@@ -1,0 +1,51 @@
+services:
+  db:
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    image: postgres
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "flynext"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  migrations:
+    build:
+      context: .
+      dockerfile: migrations.Dockerfile
+    container_name: flynext_migrations
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+    env_file: .env
+    restart: "no"
+  
+  flynext:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flynext
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - upload-data:/flynext/public/upload
+
+volumes:
+  db-data:
+  upload-data:

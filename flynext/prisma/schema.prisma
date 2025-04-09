@@ -1,0 +1,202 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ThemePreference {
+  light
+  dark
+}
+
+model User {
+  id                String   @id @default(uuid())
+  firstName         String
+  lastName          String
+  email             String
+  passwordHash      String
+  phone             String
+  profilePicture    String?
+  themePreference   ThemePreference @default(light)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  hotels            Hotel[] // A user owns multiple hotels
+  bookings          Booking[]
+  notifications     Notification[]
+  externalApiKeys   ExternalApiKey[]
+  refresh_token     RefreshToken[]
+  logs              Log[]
+
+  @@map("users")
+}
+
+model Hotel {
+  id          String   @id @default(uuid())
+  name        String
+  logo        String?
+  address     Json 
+  cityId      String
+  starRating  Int
+  images      Json?  
+  ownerId     String
+  latitude    Float?   // Added for map coordinates
+  longitude   Float?   // Added for map coordinates
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  city        City     @relation(fields: [cityId], references: [id])
+  rooms       Room[]
+  bookings    Booking[]
+
+  @@map("hotels")
+}
+
+model Room {
+  id             String   @id @default(uuid())
+  hotelId        String
+  type           String   // e.g., twin, double
+  pricePerNight  Decimal  
+  amenities      Json?     
+  availableRooms Int
+  images         Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  hotel          Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  bookingRooms   BookingRoom[]
+
+  @@map("rooms")
+}
+
+model Booking {
+  id             String   @id @default(dbgenerated("substring(gen_random_uuid()::text, 1, 6)"))
+  name           String   @default("Untitled Booking") // New field to distinguish bookings
+  userId         String
+  hotelId        String?
+  checkIn        DateTime?
+  checkOut       DateTime?
+  totalPrice     Decimal  
+  status         BookingStatus
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  paymentStatus  PaymentStatus
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hotel          Hotel?   @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  bookingRooms   BookingRoom[]
+  bookingFlights BookingFlight[]
+
+  @@map("bookings")
+}
+
+model BookingFlight {
+  id               String        @id @default(uuid())
+  bookingId        String
+  flightId         String
+  bookingReference String?
+  status           BookingStatus @default(pending)
+  
+  booking          Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  @@map("booking_flights")
+}
+
+model BookingRoom {
+  id         String @id @default(uuid())
+  bookingId  String
+  roomId     String
+  quantity   Int
+  status     BookingStatus @default(pending)
+
+  booking    Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  room       Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@map("booking_rooms")
+}
+
+model City {
+  id        String @id @default(uuid())
+  name      String                                     
+  country   String
+
+  airports  Airport[]
+  hotels    Hotel[]
+}
+
+model Airport {
+  id      String @id @default(uuid())
+  name    String
+  code    String @unique
+
+  cityId  String
+  city    City   @relation(fields: [cityId], references: [id])
+}
+
+model Notification {
+  id            String   @id @default(uuid())
+  userId        String?
+  message       String
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model ExternalApiKey {
+  id         String   @id @default(uuid())
+  userId     String
+  apiKeyHash String
+  createdAt  DateTime @default(now())
+
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("external_api_keys")
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  timestamp DateTime @default(now())
+
+  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("logs")
+}
+
+enum BookingStatus {
+  confirmed
+  canceled
+  pending
+}
+
+enum PaymentStatus {
+  success
+  failed
+  pending
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
