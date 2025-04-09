@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode (Day cabin with yellow field) */
+    --background: 200 30% 97%;
+    --foreground: 210 10% 20%;
+    
+    /* Card colors */
+    --card: 0 0% 100%;
+    --card-foreground: 210 10% 20%;
+    
+    /* Popover colors */
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 10% 20%;
+    
+    /* Primary colors - Sky blue to match the light mode sky */
+    --primary: 250 100% 70%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary colors - Golden yellow to match the field */
+    --secondary: 250, 100%, 84%;
+    --secondary-foreground: 210 10% 20%;
+    
+    /* Muted colors */
+    --muted: 200 20% 90%;
+    --muted-foreground: 210 30% 40%;
+    
+    /* Accent colors - Slightly different gold shade */
+    --accent: 249, 47%, 62%;
+    --accent-foreground: 210 10% 20%;
+    
+    /* Destructive colors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Border and input colors */
+    --border: 200 20% 80%;
+    --input: 200 20% 80%;
+    
+    /* Ring color for focus states */
+    --ring: 200 70% 60%;
+    
+    /* Chart colors */
+    --chart-1: 200 70% 60%;
+    --chart-2: 40 90% 60%;
+    --chart-3: 35 85% 55%;
+    --chart-4: 210 60% 50%;
+    --chart-5: 190 70% 50%;
+    
+    /* Border radius */
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    /* Dark mode (Candle-lit cabin) */
+    --background: 25 15% 12%;        /* Warmer dark background */
+    --foreground: 30 15% 90%;        /* Warm white text */
+    
+    /* Card colors */
+    --card: 25 15% 15%;              /* Slightly lighter than background */
+    --card-foreground: 30 15% 90%;   /* Same as foreground */
+    
+    /* Popover colors */
+    --popover: 25 15% 15%;           /* Same as card */
+    --popover-foreground: 30 15% 90%; /* Same as foreground */
+    
+    /* Primary colors - Candle light orange */
+    --primary: 30 90% 65%;           /* Candle light orange */
+    --primary-foreground: 25 10% 10%; /* Dark text for contrast */
+    
+    /* Secondary colors - Complementary to candle light */
+    --secondary: 35 85% 55%;         /* Amber gold */
+    --secondary-foreground: 25 10% 10%; /* Dark text for contrast */
+    
+    /* Muted colors */
+    --muted: 25 20% 20%;             /* Muted warm dark */
+    --muted-foreground: 30 20% 70%;   /* Muted warm light */
+    
+    /* Accent colors */
+    --accent: 40 70% 45%;            /* Richer amber accent */
+    --accent-foreground: 30 15% 90%;  /* Light text */
+    
+    /* Destructive colors */
+    --destructive: 0 70% 35%;         /* Deeper red */
+    --destructive-foreground: 0 0% 95%; /* Light text */
+    
+    /* Border and input colors */
+    --border: 25 20% 20%;             /* Warm dark border */
+    --input: 25 20% 20%;              /* Same as border */
+    
+    /* Ring color */
+    --ring: 30 90% 65%;               /* Same as primary */
+    
+    /* Chart colors - Warm candle-inspired palette */
+    --chart-1: 30 90% 65%;            /* Primary orange */
+    --chart-2: 40 85% 60%;            /* Amber */
+    --chart-3: 15 80% 50%;            /* Rust */
+    --chart-4: 45 90% 55%;            /* Gold */
+    --chart-5: 5 75% 55%;             /* Copper */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-day-cabin {
+    background-image: url('/images/landing/day-cabin.png');
+  }
+  
+  .bg-night-cabin {
+    background-image: url('/images/landing/night-cabin.png');
+  }
+
+  /* Heading styles optimized for Quicksand */
+  .heading {
+    @apply font-medium;
+    /* Slight adjustments for Quicksand's metrics */
+    letter-spacing: -0.01em;
+  }
+  
+  /* Different heading sizes with appropriate adjustments */
+  .heading-1 {
+    @apply heading text-4xl leading-tight;
+  }
+  
+  .heading-2 {
+    @apply heading text-3xl leading-tight;
+  }
+  
+  .heading-3 {
+    @apply heading text-2xl leading-snug;
+  }
+  
+  .heading-4 {
+    @apply heading text-xl leading-snug;
+  }
+  
+  /* Add subtle text rendering optimizations for Quicksand */
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+/* Add these styles to your globals.css */
+@layer components {
+  /* Status badge base style */
+  .status-badge {
+    @apply mt-1 inline-block px-2 py-0.5 text-xs rounded-full;
+  }
+  
+  /* Status-specific styles */
+  .status-badge-confirmed {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-badge-pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-badge-cancelled {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  /* Dark mode variants */
+  .dark .status-badge-confirmed {
+    @apply bg-green-900/30 text-green-400;
+  }
+  
+  .dark .status-badge-pending {
+    @apply bg-yellow-900/30 text-yellow-400;
+  }
+  
+  .dark .status-badge-cancelled {
+    @apply bg-red-900/30 text-red-400;
+  }
+}
