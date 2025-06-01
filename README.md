@@ -2,6 +2,9 @@
   <source srcset="assets/dark-screenshot.png" media="(prefers-color-scheme: dark)">
   <img src="assets/light-screenshot.png" alt="FlyNext Screenshot" />
 </picture>
+<p style="text-align: center; margin-top: 0.5em; color: var(--caption-color, #555); font-style: italic;">
+  Switch your device's theme to dark or light mode to preview both versions of the FlyNext landing page.
+</p>
 
 # FlyNext: your most reliable travel companion!
 
